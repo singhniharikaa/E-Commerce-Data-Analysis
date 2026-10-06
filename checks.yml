@@ -1,0 +1,49 @@
+# ───────────────────────────────────────────────────────────
+#  Soda checks for the 'orders' table
+# ───────────────────────────────────────────────────────────
+checks for orders:
+
+  # ── Row count ─────────────────────────────────────────────
+  - row_count between 200 and 300
+
+  # ── Completeness — no missing required fields ─────────────
+  - missing_count(order_id) = 0
+  - missing_count(customer_id) = 0
+  - missing_count(product) = 0
+  - missing_count(order_date) = 0
+  - missing_count(payment_mode) = 0
+
+  # ── Uniqueness — order IDs must not repeat ────────────────
+  - duplicate_count(order_id) = 0
+
+  # ── Validity — status values from a fixed list ────────────
+  - invalid_count(status) = 0:
+      valid values: ["Pending", "Shipped", "Delivered", "Cancelled", "Returned"]
+
+  # ── Validity — payment mode from a fixed list ─────────────
+  - invalid_count(payment_mode) = 0:
+      valid values: ["UPI", "Credit Card", "Debit Card", "COD", "Net Banking"]
+
+  # ── Range — price and quantity must be positive ───────────
+  - invalid_count(unit_price) = 0:
+      valid min: 0.01
+  - invalid_count(unit_price) = 0:
+      valid max: 500000
+  - invalid_count(quantity) = 0:
+      valid min: 1
+
+# ───────────────────────────────────────────────────────────
+#  Soda checks for the 'customers' table
+# ───────────────────────────────────────────────────────────
+checks for customers:
+
+  # ── Row count ─────────────────────────────────────────────
+  - row_count > 0
+
+  # ── Completeness ──────────────────────────────────────────
+  - missing_count(customer_id) = 0
+  - missing_count(name) = 0
+  - missing_count(email) = 0
+
+  # ── Uniqueness ────────────────────────────────────────────
+  - duplicate_count(customer_id) = 0

@@ -1,0 +1,2 @@
+duckdb>=1.0
+soda-core-duckdb~=3.5.0
