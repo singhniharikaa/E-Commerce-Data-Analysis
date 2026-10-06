@@ -1,2 +1,3 @@
 duckdb>=1.0
 soda-core-duckdb~=3.5.0
+setuptools  # provides distutils, which Soda needs on Python 3.12+

@@ -1,24 +1,108 @@
 order_id,customer_id,product,category,unit_price,quantity,order_date,city,status
-O1001,C001,Laptop,Electronics,65000,1,2026-10-06,Mumbai,Delivered
-O1002,C002,Mouse,Accessories,800,2,2026-10-06,Pune,Delivered
-O1003,C003,Keyboard,Accessories,1500,1,2026-10-06,Nashik,Shipped
-O1004,C004,Headphones,Audio,2200,1,2026-10-06,Mumbai,Delivered
-O1005,C005,Monitor,Electronics,12000,1,2026-10-06,Thane,Pending
-O1006,C006,Webcam,Accessories,1800,2,2026-10-06,Mumbai,Delivered
-O1007,C007,Laptop,Electronics,72000,1,2026-10-06,Pune,Shipped
-O1008,C008,Mouse,Accessories,750,3,2026-10-06,Navi Mumbai,Delivered
-O1009,C009,Smartwatch,Wearables,4500,1,2026-10-06,Mumbai,Delivered
-O1010,C010,Keyboard,Accessories,1700,1,2026-10-06,Pune,Cancelled
-O1011,C011,Monitor,Electronics,13500,1,2026-10-06,Mumbai,Delivered
-O1012,C012,Headphones,Audio,2500,2,2026-10-06,Thane,Delivered
-O1013,C013,Laptop,Electronics,68000,1,2026-10-06,Nashik,Shipped
-O1014,C014,Mouse,Accessories,900,1,2026-10-06,Mumbai,Delivered
-O1015,C015,Webcam,Accessories,1900,1,2026-10-06,Pune,Pending
-O1016,C016,Laptop,Electronics,-65000,1,2026-10-06,Mumbai,Delivered
-O1017,C017,Mouse,Accessories,800,0,2026-10-06,Pune,Delivered
-O1018,,Keyboard,Accessories,1500,1,2026-10-06,Nashik,Delivered
-O1019,C019,,Accessories,900,1,2026-10-06,Mumbai,Delivered
-O1020,C020,Monitor,Electronics,12000,1,2026-10-06,Mumbai,Unknown
-O1005,C021,Monitor,Electronics,12000,1,2026-10-06,Thane,Pending
-O1022,C022,Mouse,Accessories,800,-2,2026-10-06,Pune,Delivered
-O1023,C023,Headphones,Audio,2200,1,,Mumbai,Delivered
+O0001,C002,Webcam,Accessories,1800,1,2026-10-06,Nashik,Shipped
+O0002,C048,Mouse,Accessories,800,1,2026-10-06,Mumbai,Pending
+O0003,C003,Monitor,Electronics,12000,2,2026-10-06,Mumbai,Pending
+O0004,C033,Mouse,Accessories,800,1,2026-10-06,Navi Mumbai,Pending
+O0005,C046,Monitor,Electronics,12000,1,2026-10-06,Navi Mumbai,Cancelled
+O0006,C038,Mouse,Accessories,800,2,2026-10-06,Nashik,Pending
+O0007,C045,Smartwatch,Wearables,4500,1,2026-10-06,Thane,Delivered
+O0008,C014,Keyboard,Accessories,1500,1,2026-10-06,Nashik,Pending
+O0009,C007,Laptop,Electronics,65000,2,2026-10-06,Nashik,Delivered
+O0010,C003,Monitor,Electronics,12000,2,2026-10-06,Thane,Pending
+O0011,C036,Headphones,Audio,2200,1,2026-10-06,Nashik,Delivered
+O0012,C046,Monitor,Electronics,12000,1,2026-10-06,Mumbai,Pending
+O0013,C050,Webcam,Accessories,1800,1,2026-10-06,Nashik,Pending
+O0014,C007,Smartwatch,Wearables,4500,1,2026-10-06,Thane,Delivered
+O0015,C024,Headphones,Audio,2200,3,2026-10-06,Pune,Delivered
+O0016,C043,Keyboard,Accessories,1500,1,2026-10-06,Nashik,Pending
+O0017,C011,Monitor,Electronics,12000,3,2026-10-06,Navi Mumbai,Shipped
+O0018,C025,Mouse,Accessories,800,2,2026-10-06,Nashik,Shipped
+O0019,C050,Webcam,Accessories,1800,2,2026-10-06,Mumbai,Shipped
+O0020,C021,Smartwatch,Wearables,4500,1,2026-10-06,Thane,Delivered
+O0021,C037,Laptop,Electronics,65000,1,2026-10-06,Nashik,Shipped
+O0022,C026,Webcam,Accessories,1800,2,2026-10-06,Thane,Shipped
+O0023,C016,Keyboard,Accessories,1500,1,2026-10-06,Navi Mumbai,Delivered
+O0024,C028,Webcam,Accessories,1800,3,2026-10-06,Navi Mumbai,Cancelled
+O0025,C009,Keyboard,Accessories,1500,1,2026-10-06,Navi Mumbai,Cancelled
+O0026,C008,Laptop,Electronics,65000,1,2026-10-06,Pune,Shipped
+O0027,C028,Smartwatch,Wearables,4500,3,2026-10-06,Navi Mumbai,Pending
+O0028,C039,Headphones,Audio,2200,2,2026-10-06,Thane,Delivered
+O0029,C044,Monitor,Electronics,12000,1,2026-10-06,Mumbai,Delivered
+O0030,C022,Smartwatch,Wearables,4500,3,2026-10-06,Mumbai,Delivered
+O0031,C030,Headphones,Audio,2200,1,2026-10-06,Mumbai,Delivered
+O0032,C033,Monitor,Electronics,12000,1,2026-10-06,Mumbai,Delivered
+O0033,C033,Smartwatch,Wearables,4500,3,2026-10-06,Navi Mumbai,Shipped
+O0034,C049,Mouse,Accessories,800,2,2026-10-06,Pune,Pending
+O0035,C032,Monitor,Electronics,12000,2,2026-10-06,Mumbai,Pending
+O0036,C016,Keyboard,Accessories,1500,2,2026-10-06,Mumbai,Shipped
+O0037,C006,Monitor,Electronics,12000,1,2026-10-06,Thane,Pending
+O0038,C050,Smartwatch,Wearables,4500,3,2026-10-06,Pune,Shipped
+O0039,C036,Webcam,Accessories,1800,2,2026-10-06,Pune,Delivered
+O0040,C028,Monitor,Electronics,12000,3,2026-10-06,Pune,Shipped
+O0041,C026,Webcam,Accessories,1800,2,2026-10-06,Nashik,Cancelled
+O0042,C008,Monitor,Electronics,12000,2,2026-10-06,Pune,Shipped
+O0043,C002,Laptop,Electronics,65000,2,2026-10-06,Navi Mumbai,Shipped
+O0044,C001,Monitor,Electronics,12000,1,2026-10-06,Mumbai,Pending
+O0045,C003,Mouse,Accessories,800,1,2026-10-06,Nashik,Pending
+O0046,C018,Monitor,Electronics,12000,1,2026-10-06,Thane,Shipped
+O0047,C047,Monitor,Electronics,12000,1,2026-10-06,Navi Mumbai,Cancelled
+O0048,C027,Mouse,Accessories,800,2,2026-10-06,Pune,Pending
+O0049,C028,Laptop,Electronics,65000,3,2026-10-06,Nashik,Cancelled
+O0050,C047,Headphones,Audio,2200,2,2026-10-06,Mumbai,Pending
+O0051,C047,Laptop,Electronics,65000,2,2026-10-06,Nashik,Pending
+O0052,C013,Mouse,Accessories,800,1,2026-10-06,Navi Mumbai,Cancelled
+O0053,C012,Mouse,Accessories,800,2,2026-10-06,Nashik,Cancelled
+O0054,C029,Mouse,Accessories,800,1,2026-10-06,Navi Mumbai,Pending
+O0055,C035,Laptop,Electronics,65000,3,2026-10-06,Mumbai,Pending
+O0056,C011,Smartwatch,Wearables,4500,1,2026-10-06,Thane,Cancelled
+O0057,C026,Headphones,Audio,2200,1,2026-10-06,Mumbai,Shipped
+O0058,C025,Headphones,Audio,2200,1,2026-10-06,Nashik,Cancelled
+O0059,C045,Keyboard,Accessories,1500,2,2026-10-06,Navi Mumbai,Cancelled
+O0060,C019,Mouse,Accessories,800,1,2026-10-06,Pune,Pending
+O0061,C035,Monitor,Electronics,12000,3,2026-10-06,Mumbai,Delivered
+O0062,C038,Laptop,Electronics,65000,1,2026-10-06,Thane,Shipped
+O0063,C006,Laptop,Electronics,65000,3,2026-10-06,Pune,Pending
+O0064,C044,Monitor,Electronics,12000,1,2026-10-06,Pune,Cancelled
+O0065,C016,Laptop,Electronics,65000,3,2026-10-06,Navi Mumbai,Pending
+O0066,C027,Monitor,Electronics,12000,1,2026-10-06,Navi Mumbai,Delivered
+O0067,C043,Keyboard,Accessories,1500,1,2026-10-06,Nashik,Shipped
+O0068,C009,Keyboard,Accessories,1500,2,2026-10-06,Nashik,Cancelled
+O0069,C001,Keyboard,Accessories,1500,1,2026-10-06,Thane,Pending
+O0070,C014,Laptop,Electronics,65000,3,2026-10-06,Navi Mumbai,Delivered
+O0071,C005,Mouse,Accessories,800,2,2026-10-06,Pune,Delivered
+O0072,C029,Keyboard,Accessories,1500,1,2026-10-06,Navi Mumbai,Delivered
+O0073,C034,Monitor,Electronics,12000,3,2026-10-06,Mumbai,Delivered
+O0074,C009,Webcam,Accessories,1800,1,2026-10-06,Nashik,Pending
+O0075,C036,Laptop,Electronics,65000,3,2026-10-06,Pune,Delivered
+O0076,C014,Keyboard,Accessories,1500,3,2026-10-06,Nashik,Shipped
+O0077,C017,Webcam,Accessories,1800,3,2026-10-06,Navi Mumbai,Cancelled
+O0078,C006,Keyboard,Accessories,1500,1,2026-10-06,Thane,Delivered
+O0079,C022,Laptop,Electronics,65000,1,2026-10-06,Pune,Delivered
+O0080,C029,Mouse,Accessories,800,3,2026-10-06,Navi Mumbai,Cancelled
+O0081,C008,Monitor,Electronics,12000,1,2026-10-06,Mumbai,Shipped
+O0082,C024,Monitor,Electronics,12000,1,2026-10-06,Navi Mumbai,Shipped
+O0083,C003,Headphones,Audio,2200,1,2026-10-06,Nashik,Delivered
+O0084,C023,Smartwatch,Wearables,4500,1,2026-10-06,Pune,Shipped
+O0085,C023,Webcam,Accessories,1800,1,2026-10-06,Navi Mumbai,Cancelled
+O0086,C010,Monitor,Electronics,12000,3,2026-10-06,Pune,Shipped
+O0087,C027,Smartwatch,Wearables,4500,1,2026-10-06,Mumbai,Shipped
+O0088,C027,Webcam,Accessories,1800,2,2026-10-06,Pune,Delivered
+O0089,C007,Mouse,Accessories,800,3,2026-10-06,Thane,Pending
+O0090,C015,Smartwatch,Wearables,4500,2,2026-10-06,Pune,Cancelled
+O0091,C015,Keyboard,Accessories,1500,2,2026-10-06,Pune,Pending
+O0092,C026,Webcam,Accessories,1800,1,2026-10-06,Nashik,Delivered
+O0093,C050,Smartwatch,Wearables,4500,1,2026-10-06,Nashik,Delivered
+O0094,C026,Webcam,Accessories,1800,3,2026-10-06,Navi Mumbai,Delivered
+O0095,C017,Laptop,Electronics,65000,1,2026-10-06,Pune,Delivered
+O0096,C039,Laptop,Electronics,65000,1,2026-10-06,Thane,Delivered
+O0097,C028,Webcam,Accessories,1800,2,2026-10-06,Navi Mumbai,Pending
+O0098,C013,Headphones,Audio,2200,3,2026-10-06,Nashik,Pending
+O0099,C001,Webcam,Accessories,1800,2,2026-10-06,Navi Mumbai,Shipped
+O0100,C005,Keyboard,Accessories,1500,2,2026-10-06,Nashik,Delivered
+O9001,C999,Laptop,Electronics,-65000,1,2026-10-06,Mumbai,Delivered
+O9002,C998,Mouse,Accessories,800,0,2026-10-06,Pune,Delivered
+O9003,,Keyboard,Accessories,1500,1,2026-10-06,Mumbai,Delivered
+O9004,C997,,Accessories,900,1,2026-10-06,Mumbai,Delivered
+O9005,C996,Monitor,Electronics,12000,1,2026-10-06,Pune,Unknown
+O0001,C995,Mouse,Accessories,800,1,2026-10-06,Pune,Delivered
+O0001,C002,Webcam,Accessories,1800,1,2026-10-06,Nashik,Shipped

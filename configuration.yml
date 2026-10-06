@@ -1,5 +1,5 @@
 data_source ecommerce:
   type: duckdb
-  database: ecommerce.duckdb
+  path: ecommerce.duckdb
   read_only: true
   schema_name: main

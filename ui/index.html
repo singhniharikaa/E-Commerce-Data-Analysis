@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-Commerce Data Quality Pipeline</title>
+<style>
+:root{
+  --bg:#f5f4f0; --card:#ffffff; --ink:#1d2330; --muted:#6b7280; --line:#e0ddd5;
+  --accent:#245f8a; --accent-soft:#e4eef5;
+  --ok:#2e7d4f; --ok-soft:#e5f2ea; --bad:#b3372e; --bad-soft:#f8e7e5;
+  --mono:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 48px}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+h1{font-size:24px;margin:0 0 2px;font-weight:650;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0}
+.controls{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border-radius:8px;padding:8px 16px;border:1px solid var(--line);background:var(--card);color:var(--ink);transition:background .15s,border-color .15s}
+button:hover:not(:disabled){border-color:#c3beb2;background:#faf9f6}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover:not(:disabled){background:#1d4f74;border-color:#1d4f74}
+button:disabled{opacity:.45;cursor:not-allowed}
+
+/* pipeline */
+.pipeline{display:flex;align-items:stretch;margin-bottom:20px}
+.node{flex:1 1 0;min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;cursor:default;text-align:left;position:relative;transition:border-color .2s,box-shadow .2s,opacity .2s}
+.node.reachable{cursor:pointer}
+.node.locked{opacity:.55}
+.node.selected{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.node .num{width:24px;height:24px;border-radius:50%;background:#ecebe5;color:var(--muted);font-size:12px;font-weight:650;display:flex;align-items:center;justify-content:center;margin-bottom:10px;transition:background .2s,color .2s}
+.node .title{font-weight:650;font-size:15px}
+.node .file{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:2px 0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.node .state{font-size:12.5px;color:var(--muted)}
+.node.running .num{background:var(--accent);color:#fff}
+.node.done .num{background:var(--ok);color:#fff}
+.node.done .state{color:var(--ok)}
+.node.alert .num{background:var(--bad)}
+.node.alert .state{color:var(--bad)}
+.node.error .num{background:var(--bad);color:#fff}
+.node.error .state{color:var(--bad)}
+.node .num{position:relative}
+.node.running .num::after{content:"";position:absolute;top:-5px;left:-5px;width:28px;height:28px;border-radius:50%;border:2px solid var(--accent);border-top-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.link{flex:0 0 44px;position:relative;align-self:center;height:2px;background:var(--line);transition:background .4s}
+.link.filled{background:var(--ok)}
+.link::after{content:"";position:absolute;right:-1px;top:-4px;border-left:7px solid var(--line);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:border-color .4s}
+.link.filled::after{border-left-color:var(--ok)}
+.packet{position:absolute;top:-4px;left:0;width:10px;height:10px;border-radius:50%;background:var(--accent);opacity:0}
+.packet.go{animation:travel .7s ease-in-out}
+@keyframes travel{0%{left:-4px;opacity:1}90%{opacity:1}100%{left:36px;opacity:0}}
+
+/* detail panel */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;min-height:360px}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.panel h2{font-size:19px;margin:0 0 4px;font-weight:650}
+.panel .desc{margin:0;color:var(--muted);max-width:720px}
+.chip{display:inline-block;font-family:var(--mono);font-size:12px;background:#f0efe9;border-radius:6px;padding:2px 8px;color:#4b5563}
+.divider{height:1px;background:var(--line);margin:16px 0}
+.empty{color:var(--muted);padding:28px 0;text-align:center}
+.err{background:var(--bad-soft);color:var(--bad);border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:13px;white-space:pre-wrap}
+
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.kpi{background:#faf9f6;border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:130px}
+.kpi b{display:block;font-size:22px;font-weight:650}
+.kpi span{font-size:12.5px;color:var(--muted)}
+.kpi.ok b{color:var(--ok)} .kpi.bad b{color:var(--bad)}
+
+.tablebox{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:6px 10px;text-align:left;white-space:nowrap;border-bottom:1px solid #eeece6}
+th{position:sticky;top:0;background:#f4f3ee;font-weight:600;z-index:1}
+tr.flag td{background:var(--bad-soft)}
+td .tag{font-size:11.5px;color:var(--bad);font-weight:600}
+td.nul{color:var(--bad);font-style:italic}
+
+.rule{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:9px 0;border-bottom:1px solid #eeece6}
+.rule:last-child{border-bottom:0}
+.rule code{font-family:var(--mono);font-size:13px;flex:1 1 100%;word-break:break-all}
+.rule .why{color:var(--muted);flex:1 1 0;min-width:160px;font-size:13.5px}
+.dim{font-size:11.5px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:1px 9px;white-space:nowrap}
+pre.yaml{background:#1d2330;color:#e6e8ee;border-radius:8px;padding:14px 16px;font-family:var(--mono);font-size:13px;overflow:auto;margin:0}
+.cols{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px}
+
+.check{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.check-head{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff}
+.check.failed .check-head{cursor:pointer}
+.check.failed .check-head:hover{background:#fdf7f6}
+.pill{font-size:11.5px;font-weight:650;border-radius:999px;padding:2px 10px}
+.pill.pass{background:var(--ok-soft);color:var(--ok)} .pill.fail{background:var(--bad-soft);color:var(--bad)}
+.check code{font-family:var(--mono);font-size:13px;flex:1}
+.check .cnt{color:var(--muted);font-size:13px}
+.check-body{display:none;padding:12px 14px;border-top:1px solid var(--line);background:#fcfbf9}
+.check.open .check-body{display:block}
+.check-body .why{margin:0 0 10px;color:var(--bad);font-weight:600;font-size:13.5px}
+iframe{width:100%;height:520px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.row-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+@media (max-width:900px){.pipeline{flex-direction:column}.link{display:none}.node{margin-bottom:8px}.cols{grid-template-columns:1fr}.rule{flex-wrap:wrap}.rule code{flex-basis:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>E-Commerce Data Quality Pipeline</h1>
+      <p class="sub">Orders CSV &rarr; DuckDB &rarr; Soda checks &rarr; validation report</p>
+    </div>
+    <div class="controls">
+      <button id="btnReset">Reset</button>
+      <button id="btnNext">Run next step</button>
+      <button id="btnAll" class="primary">Run full pipeline</button>
+    </div>
+  </header>
+
+  <div class="pipeline" id="pipeline"></div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+const STAGES = [
+  {id:"generate", title:"Generate data", file:"scripts/generate_data.py", btn:"Generate orders",
+   desc:"Creates a sample set of e-commerce orders. A few bad records are added on purpose so the checks have something to find."},
+  {id:"load", title:"Load into DuckDB", file:"scripts/load_duckdb.py", btn:"Load CSV into DuckDB",
+   desc:"Reads the CSV into a local DuckDB table named orders, which is the data source Soda will scan."},
+  {id:"rules", title:"Define rules", file:"checks.yml", btn:"Load quality rules",
+   desc:"The data quality rules are written in a YAML file. Each rule states what a healthy dataset must satisfy."},
+  {id:"scan", title:"Run Soda scan", file:"soda scan", btn:"Run Soda scan",
+   desc:"Soda executes every rule against the orders table and marks each one PASS or FAIL. For failed rules we fetch the exact offending rows."},
+  {id:"report", title:"Validation report", file:"reports/validation_report.html", btn:"Generate report",
+   desc:"Collects the results into a report: what passed, what failed and which records need attention."}
+];
+
+const state = {status: STAGES.map(()=> "idle"), data: {}, selected: 0, errors: {}, busy: false};
+
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs || {})){
+    if (v == null) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()){
+    if (kid == null) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(kid));
+  }
+  return el;
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const firstPending = () => { const i = state.status.findIndex(s => s !== "done"); return i === -1 ? STAGES.length : i; };
+const scanFailed = () => state.data.scan ? state.data.scan.checks.filter(c => !c.passed).length : 0;
+
+function stateText(i){
+  const s = state.status[i], d = state.data[STAGES[i].id];
+  if (s === "running") return "Running...";
+  if (s === "error") return "Failed - see details";
+  if (s !== "done") return i <= firstPending() ? "Ready to run" : "Waiting";
+  switch (STAGES[i].id){
+    case "generate": return d.count + " rows created";
+    case "load": return d.count + " rows loaded";
+    case "rules": return d.rules.length + " rules loaded";
+    case "scan": { const f = scanFailed(), t = d.checks.length; return (t - f) + " passed, " + f + " failed"; }
+    case "report": return "Report ready";
+  }
+}
+
+function renderPipeline(){
+  const root = document.getElementById("pipeline");
+  root.replaceChildren();
+  STAGES.forEach((st, i) => {
+    const s = state.status[i];
+    const reachable = i <= firstPending();
+    const alert = st.id === "scan" && s === "done" && scanFailed() > 0;
+    const cls = ["node", s, reachable ? "reachable" : "locked", state.selected === i ? "selected" : "", alert ? "alert" : ""].join(" ");
+    const node = h("div", {class: cls, id: "node-" + i, onclick: () => { if (reachable) select(i); }},
+      h("div", {class: "num"}, alert ? "!" : s === "done" ? "✓" : String(i + 1)),
+      h("div", {class: "title"}, st.title),
+      h("div", {class: "file"}, st.file),
+      h("div", {class: "state"}, stateText(i)));
+    root.append(node);
+    if (i < STAGES.length - 1){
+      root.append(h("div", {class: "link" + (state.status[i] === "done" ? " filled" : ""), id: "link-" + i}, h("div", {class: "packet"})));
+    }
+  });
+  document.getElementById("btnNext").disabled = state.busy || firstPending() >= STAGES.length;
+  document.getElementById("btnAll").disabled = state.busy || firstPending() >= STAGES.length;
+  document.getElementById("btnReset").disabled = state.busy;
+}
+
+function fire(i){
+  const p = document.querySelector("#link-" + i + " .packet");
+  if (!p) return;
+  p.classList.remove("go"); void p.offsetWidth; p.classList.add("go");
+}
+
+function select(i){ state.selected = i; render(); }
+
+async function runStage(i){
+  const st = STAGES[i];
+  state.busy = true; state.status[i] = "running"; delete state.errors[st.id];
+  state.selected = i; render();
+  try {
+    const [res] = await Promise.all([fetch("/api/" + st.id, {method: "POST"}), sleep(700)]);
+    const body = await res.json();
+    if (!res.ok) throw new Error(body.error || "Request failed");
+    state.data[st.id] = body;
+    state.status[i] = "done";
+    // later stages depend on this one, so invalidate them if it was re-run
+    for (let j = i + 1; j < STAGES.length; j++){ state.status[j] = "idle"; delete state.data[STAGES[j].id]; }
+    state.busy = false; render(); fire(i);
+    return true;
+  } catch (e){
+    state.status[i] = "error"; state.errors[st.id] = String(e.message || e);
+    state.busy = false; render();
+    return false;
+  }
+}
+
+async function runNext(){ const i = firstPending(); if (i < STAGES.length) await runStage(i); }
+async function runAll(){
+  while (firstPending() < STAGES.length){
+    if (!(await runStage(firstPending()))) break;
+    await sleep(500);
+  }
+}
+function reset(){
+  state.status = STAGES.map(() => "idle"); state.data = {}; state.errors = {}; state.selected = 0; render();
+}
+
+/* ---------- panel renderers ---------- */
+function dataTable(columns, rows, flagged){
+  const head = h("tr", null, columns.map(c => h("th", null, c)), flagged ? h("th", null, "Issue") : null);
+  const body = rows.map(r => {
+    const issues = flagged && flagged[r[0]];
+    return h("tr", {class: issues ? "flag" : ""},
+      r.map(v => v === "" || v == null ? h("td", {class: "nul"}, "empty") : h("td", null, v)),
+      flagged ? h("td", null, issues ? h("span", {class: "tag"}, issues.join("; ")) : "") : null);
+  });
+  return h("div", {class: "tablebox"}, h("table", null, head, body));
+}
+function kpi(label, value, cls){ return h("div", {class: "kpi " + (cls || "")}, h("b", null, String(value)), h("span", null, label)); }
+
+function outGenerate(d){
+  const flagged = state.data.scan ? state.data.scan.flagged : null;
+  const bad = flagged ? Object.keys(flagged).length : null;
+  return [
+    h("div", {class: "kpis"}, kpi("rows in orders.csv", d.count), bad != null ? kpi("order IDs flagged by the scan", bad, "bad") : null),
+    h("p", {class: "desc", style: "margin-bottom:10px"}, flagged
+      ? "Highlighted rows were flagged by the Soda scan."
+      : "This is the raw data. Some of these rows are invalid - the pipeline has not looked at them yet."),
+    dataTable(d.columns, d.rows, flagged)
+  ];
+}
+function outLoad(d){
+  return [
+    h("div", {class: "kpis"}, kpi("rows loaded", d.count), kpi("columns", d.schema.length)),
+    h("p", {class: "desc", style: "margin-bottom:10px"}, "Table orders in ecommerce.duckdb. DuckDB inferred these column types from the CSV."),
+    h("div", {class: "tablebox", style: "max-height:300px"}, h("table", null,
+      h("tr", null, h("th", null, "Column"), h("th", null, "Type")),
+      d.schema.map(r => h("tr", null, h("td", null, r[0]), h("td", null, r[1])))))
+  ];
+}
+function outRules(d){
+  return h("div", {class: "cols"},
+    h("div", null, d.rules.map(r => h("div", {class: "rule"},
+      h("code", null, r.name), h("span", {class: "dim"}, r.dimension), h("span", {class: "why"}, "Fails when " + r.reason)))),
+    h("div", null, h("p", {class: "desc", style: "margin-bottom:8px"}, "checks.yml"), h("pre", {class: "yaml"}, d.yaml)));
+}
+function outScan(d){
+  const failed = d.checks.filter(c => !c.passed).length;
+  const list = d.checks.map((c, idx) => {
+    const box = h("div", {class: "check " + (c.passed ? "passed" : "failed") + (!c.passed && idx === d.checks.findIndex(x => !x.passed) ? " open" : "")});
+    const head = h("div", {class: "check-head", onclick: () => { if (!c.passed) box.classList.toggle("open"); }},
+      h("span", {class: "pill " + (c.passed ? "pass" : "fail")}, c.passed ? "PASS" : "FAIL"),
+      h("code", null, c.name), h("span", {class: "dim"}, c.dimension),
+      h("span", {class: "cnt"}, c.passed ? "" : c.count + (c.count === 1 ? " row" : " rows")));
+    box.append(head);
+    if (!c.passed) box.append(h("div", {class: "check-body"}, h("p", {class: "why"}, c.reason), dataTable(d.columns, c.rows)));
+    return box;
+  });
+  return [
+    h("div", {class: "kpis"}, kpi("rows scanned", d.total), kpi("checks passed", d.checks.length - failed, "ok"), kpi("checks failed", failed, failed ? "bad" : "ok")),
+    h("p", {class: "desc", style: "margin-bottom:12px"}, "Click a failed check to see the records that broke it."),
+    list
+  ];
+}
+function outReport(d){
+  const scan = state.data.scan, failed = scanFailed();
+  const ids = new Set(Object.keys(scan.flagged));
+  return [
+    h("div", {class: "kpis"}, kpi("rows scanned", scan.total), kpi("checks passed", scan.checks.length - failed, "ok"),
+      kpi("checks failed", failed, failed ? "bad" : "ok"), kpi("order IDs with a problem", ids.size, ids.size ? "bad" : "ok")),
+    h("div", {class: "row-actions", style: "margin:0 0 14px"},
+      h("button", {class: "primary", onclick: () => window.open("/report", "_blank")}, "Open full report in new tab")),
+    h("iframe", {src: d.url + "?t=" + Date.now(), title: "Validation report"})
+  ];
+}
+const OUTPUT = {generate: outGenerate, load: outLoad, rules: outRules, scan: outScan, report: outReport};
+
+function renderPanel(){
+  const i = state.selected, st = STAGES[i], s = state.status[i];
+  const panel = document.getElementById("panel");
+  panel.replaceChildren();
+  const head = h("div", {class: "panel-head"},
+    h("div", null, h("h2", null, (i + 1) + ". " + st.title), h("p", {class: "desc"}, st.desc)),
+    h("div", null,
+      h("span", {class: "chip"}, st.file),
+      " ",
+      s === "done" || s === "error"
+        ? h("button", {style: "margin-left:8px", disabled: state.busy ? "" : null, onclick: () => runStage(i)}, "Run again")
+        : h("button", {class: "primary", style: "margin-left:8px", disabled: s === "running" || state.busy ? "" : null, onclick: () => runStage(i)}, st.btn)));
+  panel.append(head, h("div", {class: "divider"}));
+  if (s === "running") panel.append(h("div", {class: "empty"}, "Running " + st.title.toLowerCase() + "..."));
+  else if (s === "error") panel.append(h("div", {class: "err"}, state.errors[st.id] || "Something went wrong"));
+  else if (s === "done") panel.append(...[OUTPUT[st.id](state.data[st.id])].flat(Infinity));
+  else panel.append(h("div", {class: "empty"}, "Not run yet. Use the button above to run this step."));
+}
+
+function render(){ renderPipeline(); renderPanel(); }
+
+document.getElementById("btnNext").addEventListener("click", runNext);
+document.getElementById("btnAll").addEventListener("click", runAll);
+document.getElementById("btnReset").addEventListener("click", reset);
+render();
+</script>
+</body>
+</html>
